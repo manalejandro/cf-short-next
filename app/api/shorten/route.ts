@@ -2,8 +2,6 @@ import { type NextRequest, NextResponse } from "next/server";
 import { generateSlug, isValidSlug, isValidUrl, sanitiseUrl } from "@/lib/utils";
 import { getUrl, putUrl } from "@/lib/kv";
 
-export const runtime = "edge";
-
 export async function POST(request: NextRequest) {
   let body: { url?: string; customSlug?: string };
   try {

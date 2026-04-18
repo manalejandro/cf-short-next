@@ -2,8 +2,6 @@ import { type NextRequest, NextResponse } from "next/server";
 import { getUrl, incrementClicks } from "@/lib/kv";
 import { isValidSlug } from "@/lib/utils";
 
-export const runtime = "edge";
-
 export async function GET(
   _request: NextRequest,
   { params }: { params: Promise<{ slug: string }> }
