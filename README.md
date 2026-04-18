@@ -1,36 +1,147 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# CF Short
+
+> A fast, minimal, open-source URL shortener powered by **Next.js 16** and **Cloudflare Workers** with **KV storage**.
+
+![CF Short hero](public/og-image.svg)
+
+## Features
+
+- **Edge-native** — runs entirely on Cloudflare Workers, zero cold starts
+- **KV storage** — durable, globally replicated short-link persistence
+- **Custom slugs** — choose your own short path or get one auto-generated
+- **Click tracking** — lightweight, privacy-respecting hit counter
+- **Modern UI** — responsive design with light/dark mode support
+- **Open source** — deploy your own instance in minutes
+
+## Stack
+
+| Layer     | Technology                        |
+|-----------|-----------------------------------|
+| Framework | Next.js 16 (App Router)           |
+| Runtime   | Cloudflare Workers (edge)         |
+| Storage   | Cloudflare KV                     |
+| Styling   | Tailwind CSS v4                   |
+| Adapter   | `@cloudflare/next-on-pages`       |
+| Language  | TypeScript                        |
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js ≥ 20
+- A [Cloudflare account](https://dash.cloudflare.com/sign-up) (free tier works)
+- Wrangler CLI (installed as a dev dependency)
+
+### Local development
 
 ```bash
+# Install dependencies
+npm install
+
+# Start the Next.js dev server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+> **Note:** In local development the KV binding is not available. The `/api/shorten` and redirect routes require the Cloudflare edge environment. Use `npm run cf:preview` (see below) to test with a local KV simulation.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Preview with Cloudflare (local)
 
-## Learn More
+```bash
+# 1. Create a KV namespace (one-time)
+npx wrangler kv namespace create CF_SHORT_KV
+# Note the `id` returned and update wrangler.jsonc
 
-To learn more about Next.js, take a look at the following resources:
+npx wrangler kv namespace create CF_SHORT_KV --preview
+# Note the `preview_id` and update wrangler.jsonc
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+# 2. Build & preview locally with Wrangler
+npm run cf:preview
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Deploy to Cloudflare Pages
 
-## Deploy on Vercel
+```bash
+# 1. Make sure wrangler.jsonc has your real KV namespace IDs (see above)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+# 2. Set your BASE_URL in wrangler.jsonc vars section
+#    e.g. "BASE_URL": "https://cf-short-next.pages.dev"
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+# 3. Deploy
+npm run cf:deploy
+```
+
+Wrangler will prompt you to log in on the first run.
+
+### Environment variables
+
+| Variable   | Description                        | Default                             |
+|------------|------------------------------------|-------------------------------------|
+| `BASE_URL` | Public base URL of the deployment  | Derived from request `host` header  |
+
+Set `BASE_URL` in `wrangler.jsonc` under `vars` or as a Pages environment variable in the Cloudflare dashboard.
+
+## Project Structure
+
+```
+app/
+  layout.tsx          # Root layout with Header, Footer, meta tags
+  page.tsx            # Home page (hero + shortener form)
+  not-found.tsx       # 404 page
+  [slug]/
+    route.ts          # Edge redirect handler (GET /[slug])
+  api/
+    shorten/
+      route.ts        # POST /api/shorten — create short link
+    stats/
+      [slug]/
+        route.ts      # GET /api/stats/[slug] — click stats
+components/
+  Header.tsx
+  Footer.tsx
+  ShortenerForm.tsx   # Client-side form with copy-to-clipboard
+  FeatureCards.tsx
+lib/
+  kv.ts               # Cloudflare KV helpers
+  utils.ts            # Slug generation & URL validation
+public/
+  logo.svg
+  icon-512.svg
+  og-image.svg
+  manifest.json
+wrangler.jsonc        # Cloudflare Workers / Pages config
+```
+
+## API
+
+### `POST /api/shorten`
+
+**Body** (JSON):
+
+| Field        | Type   | Required | Description                        |
+|--------------|--------|----------|------------------------------------|
+| `url`        | string | yes      | The long URL to shorten            |
+| `customSlug` | string | no       | Custom slug (3–32 alphanumeric chars) |
+
+**Response 201**:
+```json
+{ "slug": "abc123", "shortUrl": "https://your-domain.pages.dev/abc123" }
+```
+
+### `GET /[slug]`
+
+Redirects (302) to the original URL. Returns 404 if the slug does not exist.
+
+### `GET /api/stats/[slug]`
+
+Returns click count and creation timestamp for a given slug.
+
+## License
+
+MIT — see [LICENSE](LICENSE).
+
+---
+
+Made with ♥ by [manalejandro](https://github.com/manalejandro)
+

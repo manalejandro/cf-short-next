@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" fill="none">
+  <rect width="1200" height="630" fill="#0a0a0a"/>
+  <!-- Gradient background glow -->
+  <radialGradient id="glow" cx="50%" cy="50%" r="55%">
+    <stop offset="0%" stop-color="#f97316" stop-opacity="0.15"/>
+    <stop offset="100%" stop-color="#0a0a0a" stop-opacity="0"/>
+  </radialGradient>
+  <rect width="1200" height="630" fill="url(#glow)"/>
+  <!-- Logo -->
+  <circle cx="160" cy="315" r="80" fill="url(#logoGrad)"/>
+  <rect x="96" y="285" width="80" height="60" rx="30" fill="none" stroke="white" stroke-width="12"/>
+  <rect x="184" y="285" width="80" height="60" rx="30" fill="none" stroke="white" stroke-width="12"/>
+  <rect x="164" y="300" width="32" height="30" fill="white" rx="4"/>
+  <!-- Title -->
+  <text x="280" y="280" font-family="system-ui, -apple-system, sans-serif" font-size="80" font-weight="700" fill="white">CF Short</text>
+  <!-- Subtitle -->
+  <text x="280" y="350" font-family="system-ui, -apple-system, sans-serif" font-size="32" fill="#f97316">Fast URL shortener · Cloudflare Workers</text>
+  <!-- URL decoration -->
+  <text x="160" y="470" font-family="ui-monospace, monospace" font-size="22" fill="#404040">https://very-long-url-you-want-to-shorten.example.com/path/to/page</text>
+  <path d="M160 495 L1040 495" stroke="#222" stroke-width="1"/>
+  <text x="160" y="530" font-family="ui-monospace, monospace" font-size="28" fill="#f97316">cfshort.link/abc123</text>
+  <defs>
+    <linearGradient id="logoGrad" x1="80" y1="235" x2="240" y2="395" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#f97316"/>
+      <stop offset="100%" stop-color="#c2410c"/>
+    </linearGradient>
+  </defs>
+</svg>

@@ -1,0 +1,17 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "cf-short-next",
+  "compatibility_date": "2025-01-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "pages_build_output_dir": ".vercel/output/static",
+  "kv_namespaces": [
+    {
+      "binding": "CF_SHORT_KV",
+      "id": "REPLACE_WITH_YOUR_KV_ID",
+      "preview_id": "REPLACE_WITH_YOUR_PREVIEW_KV_ID"
+    }
+  ],
+  "vars": {
+    "BASE_URL": "https://cf-short-next.pages.dev"
+  }
+}
