@@ -1,4 +1,4 @@
-import { getRequestContext } from "@cloudflare/next-on-pages";
+import { getCloudflareContext } from "@opennextjs/cloudflare";
 
 export interface ShortEntry {
   url: string;
@@ -7,8 +7,8 @@ export interface ShortEntry {
 }
 
 function getKV(): KVNamespace {
-  const ctx = getRequestContext();
-  return (ctx.env as Env).CF_SHORT_KV;
+  const { env } = getCloudflareContext();
+  return env.CF_SHORT_KV;
 }
 
 export async function getUrl(slug: string): Promise<ShortEntry | null> {
